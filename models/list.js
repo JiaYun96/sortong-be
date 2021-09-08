@@ -1,24 +1,28 @@
-const mongoose = require('mongoose')
-const { Schema } = mongoose
+const mongoose = require ('mongoose')
 
-
-const listSchema = new Schema({
+const listSchema = new mongoose.Schema({
     name: {
         type: String,
         required: true
     },
+
     boardId: {
-        type: Schema.Types.ObjectId,
-        ref: 'board',
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'BoardModel',
         required: true
     },
+    
     order: {
         type: String,
         required: true
     }
 },
-{
-    timestamps: true
-})
 
-module.exports = mongoose.model('list', listSchema)
+    {timestamps: true}
+
+)
+const ListModel = mongoose.model('ListModel', listSchema)
+
+module.exports = {
+    ListModel: ListModel
+}

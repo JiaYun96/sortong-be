@@ -1,28 +1,35 @@
-const mongoose = require('mongoose')
-const { Schema } = mongoose
+const mongoose = require ('mongoose')
 
-const cardSchema = new Schema({
+const cardSchema = new mongoose.Schema({
     name: {
         type: String,
         required: true
     },
-    listId: {
-        type: Schema.Types.ObjectId,
-        ref: 'list',
-        required: true
-    },
+
     boardId: {
-        type: Schema.Types.ObjectId,
-        ref: 'board',
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'BoardModel',
         required: true
     },
+
+    listId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'ListModel',
+        required: true
+    },
+
     order: {
         type: String,
         required: true
     }
 },
-{
-    timestamps: true
-})
 
-module.exports = mongoose.model('card', cardSchema)
+    {timestamps: true}
+
+)
+
+const CardModel = mongoose.model('CardModel', cardSchema)
+
+module.exports = {
+    CardModel: CardModel
+}
