@@ -4,16 +4,16 @@ const card_controller = require ('../controller/card_controller')
 
 //Card Routes
 
-//Show existing boards already created by User
-router.get('/:boardID/', board_controller.showCard)
+//View existing card based on ID
+router.get('/api/boards/:id', card_controller.findByCardId)
 
-//Create new board based on ID
-router.post('/:userID/home', board_controller.createCard)
+//Create new card
+router.post('/api/boards/:id', card_controller.createCard)
 
-//Update existing board based on ID
-router.patch('/:userID/home', board_controller.updateCard)
+//Update existing card based on ID
+router.patch('/api/boards/:id', card_controller.updateCard)
 
-//Delete existing board based on ID
-router.delete('/:userID/home', board_controller.deleteCard)
+//Delete existing card based on ID
+router.delete('/api/boards/:id', card_controller.deleteCard)
 
 module.exports = router

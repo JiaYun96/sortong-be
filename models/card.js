@@ -1,27 +1,32 @@
 const mongoose = require ('mongoose')
 
 const cardSchema = new mongoose.Schema({
-    name: {
+    cardTitle: {
         type: String,
         required: true
     },
 
-    boardId: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'BoardModel',
-        required: true
-    },
-
-    listId: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'ListModel',
-        required: true
-    },
-
-    order: {
+    cardDescription: {
         type: String,
         required: true
-    }
+    },
+
+    status: {
+        type: String,
+        required: true
+    },
+
+    board: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "BoardModel",
+        required: true
+    },
+
+    // order: {
+    //     type: String,
+    //     required: true
+    // }
+
 },
 
     {timestamps: true}
