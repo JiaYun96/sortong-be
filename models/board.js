@@ -1,25 +1,24 @@
 const mongoose = require ('mongoose')
 
 const boardSchema = new mongoose.Schema({
-    name: {
+    title: {
         type: String,
         required: [true, "Board name is required"]
     },
 
     user: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "UserModel"
+        ref: 'UserModel'
     },
 
-    cards: [{
+    col1: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: "CardModel"
     }],
-},
 
-    {timestamps: true}
-
-)
+    col2: [],
+    col3: [],
+})
 
 const BoardModel = mongoose.model('BoardModel', boardSchema)
 

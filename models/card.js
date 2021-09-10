@@ -19,7 +19,6 @@ const cardSchema = new mongoose.Schema({
     board: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "BoardModel",
-        required: true
     },
 
     // order: {

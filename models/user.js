@@ -17,18 +17,12 @@ const userSchema = new mongoose.Schema({
         type: String, 
         required: true
     },
-    
-    // skills: [{
-    //     type: mongoose.Schema.Types.ObjectId,
-    //     ref: "SkillsModel"
-    // }],
-    // image: String, //cloudinary image URL
-    },
 
-    {
-    timestamp: true,
-    // toJSON: { virtuals: true },
-    // toObject: { virtuals: true }
+    board: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "BoardModel"
+    }],
+
 })
 
 

@@ -5,16 +5,13 @@ const { UserModel } = require('../models/user')
 
 module.exports = {
     register: async (req, res) => {
-
+        
         //validation user_validate.js
-        const validatedResult = registerValidate.validate(req.body)
-        if(validatedResult.error) {
-            return res.status(400).json({ message: validatedResult.error })
-        }
+        console.log(req.body)
+        const userRegister = req.body
 
         //password match validation
-        const validatedValue = validatedResult.value
-        if(validatedValue.password !== validatedValue.confirmPassword) {
+        if(userRegister.password !== userRegister.confirmPassword) {
             return res.status(406).json({ message: 'Password did not match!' })
         }
 
@@ -22,7 +19,7 @@ module.exports = {
         let hash = ''
 
         try {
-            hash = await bcrypt.hash(validatedValue.password, 10)
+            hash = await bcrypt.hash(userRegister.password, 10)
         } catch (error) {
             console.log(error);
             return res.status(500).json()
@@ -34,7 +31,7 @@ module.exports = {
         //verify duplicate user
         let user = null
         try {
-            user = await UserModel.findOne({ email: validatedValue.email })
+            user = await UserModel.findOne({ email: userRegister.email })
         } catch (error) {
             console.log(error);
             return res.status(500).json()
@@ -45,8 +42,8 @@ module.exports = {
 
         //create user account
         let createUser = {
-            name: validatedValue.name,
-            email: validatedValue.email,
+            name: userRegister.name,
+            email: userRegister.email,
             hash: hash,
             // age: "",
             // gender: "",
