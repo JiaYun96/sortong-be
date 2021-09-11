@@ -4,20 +4,20 @@ const board_controller = require ('../controller/board_controller')
 
 //Board Routes
 
-//Show existing boards already created by User
-router.get('/api/user/:user', board_controller.findByUserId)
+//Show existing boards already created by User 
+router.get('/:userID', board_controller.findByUserId)
 
-//View existing board based on ID
-router.get('/api/boards/:id', board_controller.findByBoardId)
+//View existing board based on ID // OK
+router.get('/:userID/:boardID', board_controller.findByBoardId)
 
-//Create new board based on ID
-router.post('/api/boards', board_controller.createBoard)
+//Create new board based on ID // OK
+router.post('/:userID', board_controller.createBoard)
 
-//Update existing board based on ID
-router.patch('/api/boards/:id', board_controller.updateBoard)
+//Update existing board based on ID 
+router.patch('/:userID', board_controller.updateBoard)
 
-//Delete existing board based on ID
-router.delete('/api/boards/:id', board_controller.deleteBoard)
+//Delete existing board based on ID // OK
+router.delete('/:userID/:boardID', board_controller.deleteBoard)
 
 
 module.exports = router

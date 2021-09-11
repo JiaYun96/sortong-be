@@ -10,7 +10,7 @@ router.get('/hello', (req, res) => {
 
 //User account routes
 
-// Register new account
+// Register new account // OK
 router.post('/register', user_controller.register)
 
 // Login using account

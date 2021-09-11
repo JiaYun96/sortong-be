@@ -2,48 +2,41 @@ const mongoose = require('mongoose') // Usually for validation of mongo objectID
 const { BoardModel } = require('../models/board')
 const { CardModel } = require('../models/card')
 
-module.exports = { 
+module.exports = {
 
     // View Existing Card
     findByCardId: (req, res) => {
-        CardModel.findOne( {_id: req.params.id} )
-        .then (response => {
-            if(!response) {
-                return res.status(404).json({message: "Card not found."})
-            }
-            return res.json(response)
-        })
-        .catch(error => {
-            return res.status(500).json(error)
-        })
+        console.log(req.params)
+        CardModel.findOne({ _id: req.params.id })
+            .then(response => {
+                if (!response) {
+                    return res.status(404).json({ message: "Card not found." })
+                }
+                return res.json(response)
+            })
+            .catch(error => {
+                return res.status(500).json(error)
+            })
     },
 
     // Create New Card
-    createCard: async (req, res) => {
-        try{
-            //Get board ID from the body
-            const boardID = req.body.boardID;
-
-            const newCard = {
-                cardTitle: req.body.name,
-                cardDescription: req.body.description,
-                status: "0", // Default status for 'Pending' = 0
-                board: req.body.boardID,
-            }
-            
-            const card = await CardModel.create(newCard)
-            
-            //Link card to the board
-            await BoardModel.updateOne(
-                { _id: boardID }, 
-                { $push: {cards: card._id} }
-            )
-
-            res.json( {card} )
-        
-        } catch(err) {
-            return res.status(400).json(error)
+    createCard: (req, res) => {
+        const newCard = {
+            cardTitle: req.body.cardTitle,
+            cardDescription: req.body.cardDescription,
+            status: req.body.status, // Default status for 'Pending' = 0
+            boardID: req.params.boardID
         }
+
+        CardModel.create(newCard)
+            .then(async (cards) => {
+                await BoardModel.findOneAndUpdate(
+                    { _id: req.params.boardID },
+                    { $push: { col1: cards._id } },
+                )
+                res.json(cards);
+            })
+            .catch((err) => res.status(400).json(err))
     },
 
     // Update Existing Card
@@ -52,29 +45,33 @@ module.exports = {
             new: true,
             runValidators: true,
         })
-        .then (response => {
-            if(!response) {
-                return res.status(404).json({message: "Update Card Error"})
-            }
-            return res.json(response)
-        })
-        .catch(error => {
-            return res.status(400).json(error)
-        })
+            .then(response => {
+                if (!response) {
+                    return res.status(404).json({ message: "Update Card Error" })
+                }
+                return res.json(response)
+            })
+            .catch(error => {
+                return res.status(400).json(error)
+            })
     },
 
     // Delete Existing Card
-    deleteCard: (req, res) => {
-        CardModel.deleteOne( { _id: req.params.id })
-        .then (response => {
-            if(!response) {
-                return res.status(404).json({message: "Delete Card Error"})
-            }
-            return res.json(response)
-        })
-        .catch(error => {
-            return res.status(500).json(error)
-        })
-    },
+    deleteCard: async (req, res) => {
 
+        console.log(req.params)
+
+        try {
+            await CardModel.deleteOne({ _id: req.params.id })
+
+            await BoardModel.findOneAndUpdate({ _id: req.params.boardID },
+                { $pull: { col1: req.params.id , col2: req.params.id , col3: req.params.id} }
+            )
+
+            return res.json()
+
+        } catch (err) {
+            res.status(400).json(err)
+        }
+    }
 }

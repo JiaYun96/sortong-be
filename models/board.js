@@ -3,10 +3,10 @@ const mongoose = require ('mongoose')
 const boardSchema = new mongoose.Schema({
     title: {
         type: String,
-        required: [true, "Board name is required"]
+        required: [true, "Board title is required"]
     },
 
-    user: {
+    userID: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'UserModel'
     },

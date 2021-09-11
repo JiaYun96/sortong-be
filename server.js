@@ -7,6 +7,8 @@ const cors = require('cors')
 
 //Routers
 const userRouter = require('./routers/userRouter')
+const boardRouter = require('./routers/boardRouter')
+const cardRouter = require('./routers/cardRouter')
 
 // =======================================
 //              MIDDLEWARE
@@ -17,6 +19,9 @@ app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 
 app.use('/api/v1/user',  userRouter)
+app.use('/api/v1/boards', boardRouter)
+app.use('/api/v1/boards', cardRouter)
+app.use('*', (req, res) => res.status(404).json({ error: "not found" }))
 
 
 // =======================================
