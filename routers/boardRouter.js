@@ -4,7 +4,7 @@ const board_controller = require ('../controller/board_controller')
 
 //Board Routes
 
-//Show existing boards already created by User 
+//Show existing boards already created by User // OK
 router.get('/:userID', board_controller.findByUserId)
 
 //View existing board based on ID // OK

@@ -7,7 +7,7 @@ module.exports = {
 
     // Show existing boards
     findByUserId: (req, res) => {
-        BoardModel.find({ users: req.params.userID }).populate('cards')
+        BoardModel.find({ userID: req.params.userID }).populate('cards')
             .then(response => {
                 if (!response) {
                     return res.status(404).json()
