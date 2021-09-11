@@ -11,7 +11,7 @@ router.get('/:userID/:boardID/:id', card_controller.findByCardId)
 router.post('/:userID/:boardID', card_controller.createCard)
 
 //Update existing card based on ID 
-router.patch('/:userID/:boardID', card_controller.updateCard)
+router.patch('/:userID/:boardID/:id', card_controller.updateCard)
 
 //Delete existing card based on ID // OK
 router.delete('/:userID/:boardID/:id', card_controller.deleteCard)

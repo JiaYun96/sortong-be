@@ -58,14 +58,27 @@ module.exports = {
     },
 
     // Update board
-    updateBoard: (req, res) => {
-        BoardModel.updateOne({ _id: req.params.id }, req.body, {
-            new: true,
-            runValidators: true,
-        })
-            .then((res) => res.json(res))
-            .catch((err) => res.status(400).json(err))
+    updateBoard: async (req, res) => {
 
+        console.log(req.body)
+        console.log(req.params)
+
+        try {
+            await BoardModel.updateOne(
+                {
+                    _id: req.params.boardID
+                },
+                {
+                    $set: {
+                        title: req.body.title,
+                    }
+                }, { new: true, omitUndefined: true })
+        }
+        catch (error) {
+            console.log(error)
+            return res.status(500).json();
+        }
+        return res.json({ success: true })
     },
 
     // Delete board

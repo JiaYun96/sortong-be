@@ -24,7 +24,7 @@ module.exports = {
         const newCard = {
             cardTitle: req.body.cardTitle,
             cardDescription: req.body.cardDescription,
-            status: req.body.status, // Default status for 'Pending' = 0
+            status: req.body.status, // Default status for 'Pending' = 1
             boardID: req.params.boardID
         }
 
@@ -40,21 +40,35 @@ module.exports = {
     },
 
     // Update Existing Card
-    updateCard: (req, res) => {
-        CardModel.updateOne({ _id: req.params.id }, req.body, {
-            new: true,
-            runValidators: true,
-        })
-            .then(response => {
-                if (!response) {
-                    return res.status(404).json({ message: "Update Card Error" })
-                }
-                return res.json(response)
-            })
-            .catch(error => {
-                return res.status(400).json(error)
-            })
+    updateCard: async (req, res) => {
+
+        console.log(req.body);
+        console.log(req.params);
+
+        let { cardTitle, cardDescription, status } = req.body
+
+        try {
+            await CardModel.updateOne(
+                {
+                    _id: req.params.id
+                },
+                {
+                    $set: {
+                        cardTitle: cardTitle,
+                        cardDescription: cardDescription,
+                        status: status,
+                    }
+                }, { new: true, omitUndefined: true })
+        
+        }
+        catch (error) {
+            console.log(error)
+            return res.status(500).json();
+        }
+        return res.json({ success: true })
+
     },
+
 
     // Delete Existing Card
     deleteCard: async (req, res) => {
@@ -65,7 +79,7 @@ module.exports = {
             await CardModel.deleteOne({ _id: req.params.id })
 
             await BoardModel.findOneAndUpdate({ _id: req.params.boardID },
-                { $pull: { col1: req.params.id , col2: req.params.id , col3: req.params.id} }
+                { $pull: { col1: req.params.id, col2: req.params.id, col3: req.params.id } }
             )
 
             return res.json()

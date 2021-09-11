@@ -13,7 +13,7 @@ router.get('/hello', (req, res) => {
 // Register new account // OK
 router.post('/register', user_controller.register)
 
-// Login using account
+// Login using account 
 router.post('/login', user_controller.login)
 
 module.exports = router
