@@ -1,9 +1,11 @@
 const mongoose = require('mongoose')
 const bcrypt = require('bcrypt')
-
+const { loginValidate } = require('../middleware/user_validate')
 const { UserModel } = require('../models/user')
 
 module.exports = {
+    
+    // User Register
     register: async (req, res) => {
         
         //validation user_validate.js
@@ -19,7 +21,7 @@ module.exports = {
         let hash = ''
 
         try {
-            hash = await bcrypt.hash(userRegister.password, 10)
+            hash = await bcrypt.hash(userRegister.password, 7)
         } catch (error) {
             console.log(error);
             return res.status(500).json()
@@ -45,8 +47,6 @@ module.exports = {
             name: userRegister.name,
             email: userRegister.email,
             hash: hash,
-            // age: "",
-            // gender: "",
         }
 
         UserModel.create(createUser)
@@ -59,6 +59,7 @@ module.exports = {
     },
 
 
+    // User Login
     login: async (req, res) => {
 
         //validation email & pw provided
@@ -79,6 +80,7 @@ module.exports = {
         if (!user) {
             return res.status(200).json({ success: false, message: 'Given email is incorrect' })
         }
+
         //verify correct password
         let isPasswordCorrect = false
         try {
@@ -91,8 +93,6 @@ module.exports = {
         }
 
         return res.json({ success: true, userID: user._id, message: "Login Successfully!", name: user.name })
-
-        //JWT expiry
 
     },
 }
