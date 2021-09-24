@@ -1,6 +1,14 @@
-const mongoose = require ('mongoose')
+const mongoose = require('mongoose')
+// const statusCodes = ;
 
 const cardSchema = new mongoose.Schema({
+
+    cardId: {
+        type: String,
+        required: true,
+        unique: true
+    },
+
     cardTitle: {
         type: String,
         required: true
@@ -11,28 +19,34 @@ const cardSchema = new mongoose.Schema({
         required: true
     },
 
-    status: {
+    cardStatus: {
+        type: Number,
+        required: true,
+        default: 1
+    },
+
+    cardIndex: {
+        type: Number,
+        required: false,
+        default: 0
+    },
+
+    boardId: {
         type: String,
-        required: true
-    },
-
-    boardID: {
-        type: mongoose.Schema.Types.ObjectId,
+        required: true,
         ref: "BoardModel",
-    },
-
-    // order: {
-    //     type: String,
-    //     required: true
-    // }
+    }
 
 },
+    {
+        timestamps: true
+    }
 
-    {timestamps: true}
+);
 
-)
+cardSchema.index({ cardId: 1 }); // creating customized index
 
-const CardModel = mongoose.model('CardModel', cardSchema)
+const CardModel = mongoose.model('card', cardSchema)
 
 module.exports = {
     CardModel: CardModel

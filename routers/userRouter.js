@@ -2,18 +2,21 @@ const express = require ('express')
 const router = express.Router()
 const user_controller = require ('../controller/user_controller')
 
-//hello world
+// User Routes
 
-router.get('/hello', (req, res) => {
-    res.send("hello is this working")
-})
-
-//User account routes
-
-// Register new account // OK
+// Register/Create New User
 router.post('/register', user_controller.register)
 
-// Login using account // OK (email + password)
+// Login Existing User 
 router.post('/login', user_controller.login)
 
+
 module.exports = router
+
+
+//hello world
+
+// router.get('/test', auth, (req, res) => {
+//     console.log('hello is this working')
+//     res.send("hello is this working")
+// })

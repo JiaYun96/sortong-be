@@ -20,7 +20,7 @@ app.use(express.urlencoded({ extended: true }))
 
 app.use('/api/v1/user',  userRouter)
 app.use('/api/v1/boards', boardRouter)
-app.use('/api/v1/boards', cardRouter)
+app.use('/api/v1/cards', cardRouter)
 app.use('*', (req, res) => res.status(404).json({ error: "not found" }))
 
 
@@ -31,7 +31,8 @@ app.use('*', (req, res) => res.status(404).json({ error: "not found" }))
 // Mongoose connection setup
 mongoose.set('useFindAndModify', false)
 mongoose.set('useCreateIndex', true)
-mongoose.connect(`mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@${process.env.DB_HOST}/${process.env.DB_NAME}?authSource=admin&replicaSet=atlas-ov6942-shard-0&readPreference=primary&appname=MongoDB%20Compass&ssl=true`,{useNewUrlParser: true, useUnifiedTopology: true});
+// mongoose.connect(`mongodb://${process.env.DB_USER}:${process.env.DB_PASS}@${process.env.DB_HOST}/${process.env.DB_NAME}?authSource=admin&replicaSet=atlas-ov6942-shard-0&readPreference=primary&appname=MongoDB%20Compass&ssl=true`,{useNewUrlParser: true, useUnifiedTopology: true});
+mongoose.connect('mongodb://localhost/sortong');
 const db = mongoose.connection;
 
 db.once('open', () => {
@@ -42,7 +43,7 @@ db.once('open', () => {
   });
 });
 
-db.on('error', () => {
-  console.log("Mongoose connection failed");
+db.on('error', (err) => {
+  console.log("Mongoose connection failed", err);
 });
 

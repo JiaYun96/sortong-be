@@ -1,23 +1,24 @@
 const express = require ('express')
 const router = express.Router()
 const board_controller = require ('../controller/board_controller')
+const auth = require("../middleware/auth")
 
-//Board Routes
+// Board Routes
 
-//Show existing boards already created by User // OK
-router.get('/:userID', board_controller.findByUserId)
+//Show all existing boards of an User // OK
+router.get('/:userId', auth, board_controller.findAllBoards)
 
-//View existing board based on ID // OK
-router.get('/:userID/:boardID', board_controller.findByBoardId)
+//View specific board of an User // OK
+router.get('/:userId/:boardId', auth, board_controller.findByBoardId)
 
-//Create new board based on ID // OK
-router.post('/:userID', board_controller.createBoard)
+//Create new board for an User // OK
+router.post('/:userId', auth, board_controller.createBoard)
 
-//Update existing board based on ID // OK
-router.patch('/:userID/:boardID', board_controller.updateBoard)
+//Update existing board for an User // OK
+router.patch('/:userId/:boardId', auth, board_controller.updateBoard)
 
-//Delete existing board based on ID // OK
-router.delete('/:userID/:boardID', board_controller.deleteBoard)
+//Delete existing board of an User // OK
+router.delete('/:userId/:boardId', auth, board_controller.deleteBoard)
 
 
 module.exports = router

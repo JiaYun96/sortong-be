@@ -1,91 +1,309 @@
-const mongoose = require('mongoose') // Usually for validation of mongo objectID
+const mongoose = require('mongoose') // Usually for validation of mongo objectId
 const { BoardModel } = require('../models/board')
 const { CardModel } = require('../models/card')
+const { v4: uuid } = require('uuid');
+const { createCardDataValidate, updateCardDataValidate } = require('../middleware/dataValidator')
 
 module.exports = {
 
-    // View Existing Card
-    findByCardId: (req, res) => {
-        console.log(req.params)
-        CardModel.findOne({ _id: req.params.id })
-            .then(response => {
-                if (!response) {
-                    return res.status(404).json({ message: "Card not found." })
-                }
-                return res.json(response)
-            })
-            .catch(error => {
-                return res.status(500).json(error)
-            })
-    },
+    // Show existing cards of board
+    findAllCards: async (req, res) => {
+        try {
+            const { userId, boardId } = req.params;
 
-    // Create New Card
-    createCard: (req, res) => {
-        const newCard = {
-            cardTitle: req.body.cardTitle,
-            cardDescription: req.body.cardDescription,
-            status: req.body.status, // Default status for 'Pending' = 1
-            boardID: req.params.boardID
+            // Data sanitization
+            const sanitizedUserId = userId.trim()
+            const sanitizedBoardId = boardId.trim()
+
+            // Data validation
+            if (!sanitizedUserId && !sanitizedBoardId) {
+                return res.status(400).json({
+                    success: false,
+                    message: 'Provide required values to fetch all cards, of the board.'
+                })
+            }
+
+            // Getting all cards of the board
+            const boardCards = await CardModel.find({ boardId: sanitizedBoardId });
+            if (boardCards) {
+
+                // Sending final data to frontend side
+                return res.status(200).json({
+                    success: true,
+                    data: boardCards.length ? boardCards : []
+                })
+            } else {
+                return res.status(404).json({
+                    success: false,
+                    message: "unable to find cards"
+                })
+            }
+        } catch (error) {
+            console.log('Error while fetching all cards, of the board : ', error)
+            return res.status(500).json({
+                success: false,
+                message: error
+            })
+        }
+    },
+    // End logic
+
+
+
+
+    // Show single existing card
+    findByCardId: async (req, res) => {
+        try {
+            const { boardId, id } = req.params
+
+            // Data sanitization
+            const sanitizedBoardId = boardId.trim()
+            const sanitizedCardId = id.trim()
+
+            // Data validation
+            if (!sanitizedBoardId || !sanitizedCardId) {
+                return res.status(400).json({
+                    success: false,
+                    message: 'Provide required values to fetch a card, of the baord.'
+                })
+            }
+
+            const cardDetails = await CardModel.findOne({ cardId: sanitizedCardId })
+            if (cardDetails && cardDetails.boardId == sanitizedBoardId) {
+
+                // Sending final data to frontend side
+                return res.status(200).json({
+                    success: true,
+                    data: cardDetails
+                })
+            } else {
+                return res.status(404).json({
+                    success: false,
+                    message: "Unable to find the Card"
+                })
+            }
+        } catch (error) {
+            console.log('Error while fetching a Card, of the baord : ', error)
+            return res.status(500).json({
+                success: false,
+                message: error
+            })
+        }
+    },
+    // Logic Ends
+
+
+
+
+    // Create new card for board
+    createCard: async (req, res) => {
+
+        try {
+            const { title, desc } = req.body;
+            const { boardId } = req.params;
+            const cardId = uuid(); // unique card Id
+
+            // Data sanitization
+            const dataForValidation = {
+                boardId: boardId.trim(),
+                cardId: cardId.trim(),
+                title: title.trim(),
+                desc: desc.trim()
+            }
+
+            // Data Validation
+            const { error, value } = createCardDataValidate.validate(dataForValidation)
+            if (error) {
+                const errMsg = (error && error.details && error.details.length && error.details[0].message) || "Data Validation, FAILED!";
+                return res.status(400).json({
+                    success: false,
+                    message: errMsg
+                });
+            }
+
+            // Creating Data for adding an new card
+            const card = {
+                boardId: value.boardId,
+                cardId: value.cardId,
+                cardTitle: value.title,
+                cardDescription: value.desc
+            }
+
+            // Creating a new card
+            const newCard = await CardModel.create(card);
+            if (newCard && newCard._id) {
+
+                // Updated the Board with newly created card
+                const updatedBoard = await BoardModel.findOneAndUpdate(
+                    { boardId: boardId },
+                    { $push: { cards: newCard.cardId } }
+                )
+
+                // If success then, sending final success response
+                if (updatedBoard) {
+                    return res.status(200).json({
+                        success: true,
+                        data: newCard
+                    });
+                } else {
+                    return res.status(424).json({
+                        success: false,
+                        message: 'Failed to create a Card, for the Board'
+                    })
+                }
+            } else {
+                return res.status(422).json({
+                    success: false,
+                    message: 'Failed to create a Card'
+                })
+            }
+        } catch (error) {
+            console.log('Error while Creating a NEW Card, for the user : ', error)
+            return res.status(500).json({
+                success: false,
+                message: error
+            })
         }
 
-        CardModel.create(newCard)
-            .then(async (cards) => {
-                await BoardModel.findOneAndUpdate(
-                    { _id: req.params.boardID },
-                    { $push: { col1: cards._id } },
-                )
-                res.json(cards);
-            })
-            .catch((err) => res.status(400).json(err))
     },
+    // Logic ends
 
-    // Update Existing Card
+
+
+
+    //Update existing card in a board
     updateCard: async (req, res) => {
 
-        console.log(req.body);
-        console.log(req.params);
-
-        let { cardTitle, cardDescription, status } = req.body
-
         try {
-            await CardModel.updateOne(
+            const { title, desc, status, index } = req.body
+            const { boardId, id } = req.params
+
+            // Data sanitization
+            const dataForValidation = {
+                boardId: boardId.trim(),
+                cardId: id.trim()
+            }
+            if (title) dataForValidation.title = title.trim()
+            if (desc) dataForValidation.desc = desc.trim()
+            if (status) dataForValidation.status = status
+            if (index) dataForValidation.index = index
+
+            // Data Validation
+            const { error, value } = updateCardDataValidate.validate(dataForValidation);
+            if (error) {
+                const errMsg = (error && error.details && error.details.length && error.details[0].message) || "Data validation failed";
+                return res.status(400).json({
+                    success: false,
+                    message: errMsg
+                });
+            }
+
+            // Creating Data for updating card
+            const dataToUpdate = {};
+
+            if (value.title) dataToUpdate.cardTitle = value.title;
+            if (value.desc) dataToUpdate.cardDescription = value.desc;
+            if (value.status) dataToUpdate.cardStatus = value.status;
+            // if (value.index) dataToUpdate.cardIndex = value.index;
+
+            // Updating an existing Card
+            const updatedCard = await CardModel.updateOne(
+                { cardId: value.cardId },
                 {
-                    _id: req.params.id
+                    $set: { ...dataToUpdate }
                 },
-                {
-                    $set: {
-                        cardTitle: cardTitle,
-                        cardDescription: cardDescription,
-                        status: status,
-                    }
-                }, { new: true, omitUndefined: true })
-        
-        }
-        catch (error) {
-            console.log(error)
-            return res.status(500).json();
-        }
-        return res.json({ success: true })
-
-    },
-
-
-    // Delete Existing Card
-    deleteCard: async (req, res) => {
-
-        console.log(req.params)
-
-        try {
-            await CardModel.deleteOne({ _id: req.params.id })
-
-            await BoardModel.findOneAndUpdate({ _id: req.params.boardID },
-                { $pull: { col1: req.params.id, col2: req.params.id, col3: req.params.id } }
+                { returnNewDocument: true, omitUndefined: true }
             )
 
-            return res.json()
+            if (updatedCard) {
 
-        } catch (err) {
-            res.status(400).json(err)
+                // Sending Success Response to the frontend side
+                if (updatedCard.nModified && updatedCard.nModified === 1) {
+                    return res.status(200).json({
+                        success: true,
+                        message: "Card Details Updated"
+                    });
+                } else {
+                    return res.status(400).json({
+                        success: false,
+                        message: "No new data to update"
+                    });
+                }
+            } else {
+                return res.status(422).json({
+                    success: false,
+                    message: "Failed to update card"
+                });
+            }
+        }
+        catch (error) {
+            console.log('Error while Updating a Card : ', error)
+            return res.status(500).json({
+                success: false,
+                message: error
+            })
+        }
+    },
+    // Logic ends
+
+
+
+
+    // Delete existing card
+    deleteCard: async (req, res) => {
+        try {
+
+            const { boardId, id } = req.params;
+
+            // Data sanitization
+            const sanitizedBoardId = boardId.trim()
+            const sanitizedCardId = id.trim()
+
+            // Data validation
+            if (!sanitizedBoardId || !sanitizedCardId) {
+                return res.status(400).json({
+                    success: false,
+                    message: 'Provide required values to delete a card.'
+                })
+            }
+
+            // Deleting the Card
+            const deletedCardResp = await CardModel.deleteOne({ cardId: sanitizedCardId })
+            if (deletedCardResp && deletedCardResp.deletedCount && deletedCardResp.deletedCount == 1) {
+
+                // Removing Card from Board details
+                const updatedBoard = await BoardModel.findOneAndUpdate(
+                    { boardId: sanitizedBoardId },
+                    { $pull: { cards: sanitizedCardId } },
+                    { new: true }
+                );
+                if (updatedBoard && updatedBoard.cards && updatedBoard.cards.includes(sanitizedCardId) == false) {
+
+                    // Sending Final Response of card deletion update
+                    return res.status(200).json({
+                        success: true,
+                        message: "Card Deleted Successfully"
+                    });
+                } else {
+                    return res.status(424).json({
+                        success: false,
+                        message: "Card deleted BUT NOT removed from Board"
+                    });
+                }
+            } else {
+                return res.status(200).json({
+                    success: false,
+                    message: "No card Deleted!"
+                });
+            }
+        } catch (error) {
+            console.log('Error while Deleting a Card : ', error)
+            return res.status(500).json({
+                success: false,
+                message: error
+            });
         }
     }
+    //Logic ends
+
 }

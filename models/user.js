@@ -1,8 +1,14 @@
 const mongoose = require ('mongoose')
-// const { EnumUserGender } = require('./choices')
 
 const userSchema = new mongoose.Schema({
-    name: {
+
+    userId: {
+        type: String,
+        required: true, 
+        unique: true
+    },
+
+    fullName: {
         type: String, 
         required: true
     },
@@ -13,21 +19,23 @@ const userSchema = new mongoose.Schema({
         unique: true
     },
     
-    hash: {
+    pwd: {
         type: String, 
         required: true
     },
 
-    board: [{
-        type: mongoose.Schema.Types.ObjectId,
+    boards: [{
+        type: String,
+        required: true,
         ref: "BoardModel"
     }],
 
 })
 
 
+userSchema.index({ userId: 1 }); // creating customized index
 
-const UserModel = mongoose.model('UserModel', userSchema)
+const UserModel = mongoose.model('user', userSchema)
 
 module.exports = {
     UserModel: UserModel

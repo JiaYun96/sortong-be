@@ -1,28 +1,42 @@
 const mongoose = require ('mongoose')
 
-const listSchema = new mongoose.Schema({
-    name: {
+const userSchema = new mongoose.Schema({
+
+    userId: {
         type: String,
-        required: true
+        required: true, 
+        unique: true
     },
 
-    boardId: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'BoardModel',
+    fullName: {
+        type: String, 
         required: true
     },
     
-    order: {
-        type: String,
+    email: {
+        type: String, 
+        required: true, 
+        unique: true
+    },
+    
+    pwd: {
+        type: String, 
         required: true
-    }
-},
+    },
 
-    {timestamps: true}
+    boards: [{
+        type: String,
+        required: true,
+        ref: "BoardModel"
+    }],
 
-)
-const ListModel = mongoose.model('ListModel', listSchema)
+})
+
+
+userSchema.index({ userId: 1 }); // creating customized index
+
+const UserModel = mongoose.model('user', userSchema)
 
 module.exports = {
-    ListModel: ListModel
+    UserModel: UserModel
 }
