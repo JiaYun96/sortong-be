@@ -19,7 +19,7 @@ module.exports = {
             if (!sanitizedUserId && !sanitizedBoardId) {
                 return res.status(400).json({
                     success: false,
-                    message: 'Provide required values to fetch all cards, of the board.'
+                    message: 'Provide required values to fetch all cards of the board.'
                 })
             }
 
@@ -39,7 +39,7 @@ module.exports = {
                 })
             }
         } catch (error) {
-            console.log('Error while fetching all cards, of the board : ', error)
+            console.log('Error while fetching all cards of the board : ', error)
             return res.status(500).json({
                 success: false,
                 message: error
@@ -63,7 +63,7 @@ module.exports = {
             if (!sanitizedBoardId || !sanitizedCardId) {
                 return res.status(400).json({
                     success: false,
-                    message: 'Provide required values to fetch a card, of the baord.'
+                    message: 'Provide required values to fetch a card of the baord.'
                 })
             }
 
@@ -82,7 +82,7 @@ module.exports = {
                 })
             }
         } catch (error) {
-            console.log('Error while fetching a Card, of the baord : ', error)
+            console.log('Error while fetching a Card of the baord : ', error)
             return res.status(500).json({
                 success: false,
                 message: error
@@ -113,7 +113,7 @@ module.exports = {
             // Data Validation
             const { error, value } = createCardDataValidate.validate(dataForValidation)
             if (error) {
-                const errMsg = (error && error.details && error.details.length && error.details[0].message) || "Data Validation, FAILED!";
+                const errMsg = (error && error.details && error.details.length && error.details[0].message) || "Data validation failed"
                 return res.status(400).json({
                     success: false,
                     message: errMsg
@@ -147,7 +147,7 @@ module.exports = {
                 } else {
                     return res.status(424).json({
                         success: false,
-                        message: 'Failed to create a Card, for the Board'
+                        message: 'Failed to create a Card for the Board'
                     })
                 }
             } else {
@@ -157,7 +157,7 @@ module.exports = {
                 })
             }
         } catch (error) {
-            console.log('Error while Creating a NEW Card, for the user : ', error)
+            console.log('Error while Creating a NEW Card for the user : ', error)
             return res.status(500).json({
                 success: false,
                 message: error
@@ -188,9 +188,9 @@ module.exports = {
             if (index) dataForValidation.index = index
 
             // Data Validation
-            const { error, value } = updateCardDataValidate.validate(dataForValidation);
+            const { error, value } = updateCardDataValidate.validate(dataForValidation)
             if (error) {
-                const errMsg = (error && error.details && error.details.length && error.details[0].message) || "Data validation failed";
+                const errMsg = (error && error.details && error.details.length && error.details[0].message) || "Data validation failed"
                 return res.status(400).json({
                     success: false,
                     message: errMsg
