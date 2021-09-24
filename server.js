@@ -32,12 +32,12 @@ app.use('*', (req, res) => res.status(404).json({ error: "not found" }))
 mongoose.set('useFindAndModify', false)
 mongoose.set('useCreateIndex', true)
 // mongoose.connect(`mongodb://${process.env.DB_USER}:${process.env.DB_PASS}@${process.env.DB_HOST}/${process.env.DB_NAME}?authSource=admin&replicaSet=atlas-ov6942-shard-0&readPreference=primary&appname=MongoDB%20Compass&ssl=true`,{useNewUrlParser: true, useUnifiedTopology: true});
-// mongoose.connect('mongodb://localhost/sortong');
+mongoose.connect('mongodb://localhost/sortong');
 
-mongoose.connect(`mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@${process.env.DB_HOST}/${process.env.DB_NAME}?retryWrites=true&w=majority`,
-{useNewUrlParser: true, 
-  useCreateIndex: true, 
-  useUnifiedTopology: true})
+// mongoose.connect(`mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@${process.env.DB_HOST}/${process.env.DB_NAME}?retryWrites=true&w=majority`,
+// {useNewUrlParser: true, 
+//   useCreateIndex: true, 
+//   useUnifiedTopology: true})
 
 const db = mongoose.connection;
 

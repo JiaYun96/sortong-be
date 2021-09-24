@@ -46,8 +46,7 @@ module.exports = {
             })
         }
     },
-    // End logic
-
+    // Logic ends
 
 
 
@@ -90,7 +89,7 @@ module.exports = {
             })
         }
     },
-    // Logic Ends
+    // Logic ends
 
 
 
@@ -304,6 +303,6 @@ module.exports = {
             });
         }
     }
-    //Logic ends
+    // Logic ends
 
 }

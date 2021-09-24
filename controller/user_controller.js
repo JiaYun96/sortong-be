@@ -132,7 +132,7 @@ module.exports = {
             })
         }
     },
-    // User Registration (END) =================================================>
+    // Logic ends
 
 
 
@@ -204,6 +204,6 @@ module.exports = {
         }
 
     }
-    // User Login (END) =================================================>
+    // Logic ends
 
 }

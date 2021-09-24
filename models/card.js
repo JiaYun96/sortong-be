@@ -44,7 +44,7 @@ const cardSchema = new mongoose.Schema({
 
 );
 
-cardSchema.index({ cardId: 1 }); // creating customized index
+cardSchema.index({ cardId: 1 }); // creating customised index
 
 const CardModel = mongoose.model('card', cardSchema)
 

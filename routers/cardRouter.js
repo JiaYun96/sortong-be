@@ -1,7 +1,7 @@
 const express = require ('express')
 const router = express.Router()
 const card_controller = require ('../controller/card_controller')
-const auth = require("../middleware/auth");
+const auth = require("../middleware/auth")
 
 //Card Routes
 

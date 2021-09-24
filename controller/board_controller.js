@@ -95,7 +95,7 @@ module.exports = {
 
 
 
-    //==========================> Create new board for a User <===========================//
+    // Create new board for user
     createBoard: async (req, res) => {
         try {
             const { title } = req.body;
@@ -163,12 +163,12 @@ module.exports = {
         }
 
     },
-    //==========================> Creating board Logics, Ends here <===========================//
+    /* ======= Logic ends for 'Create new board for User' ====== */ 
 
 
 
 
-    //============================> Update an existing board <=============================//
+    // Update an existing board
     updateBoard: async (req, res) => {
 
         try {
@@ -226,12 +226,12 @@ module.exports = {
             })
         }
     },
-    //============================> Updating board Logics, Ends here <=============================//
+    /* ======= Logic ends for 'Update an existing board' ====== */ 
 
 
 
 
-    //============================> Delete an existing board <=============================//
+    // Delete an existisg board
     deleteBoard: async (req, res) => {
         try {
 
@@ -307,7 +307,7 @@ module.exports = {
             });
         }
     }
-    //============================> Deleting board Logics, Ends here <=============================//
+    /* ======= Logic ends for 'Delete an existing board' ====== */ 
 
 
 }
